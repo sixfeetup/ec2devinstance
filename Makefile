@@ -6,6 +6,7 @@ key-pair:
 	ssh-keygen -t ED25519 -f ~/.ssh/ec2dev_key -N ""
 
 tfplan.out: terraform.tfvars key-pair
+	terraform init
 	terraform plan -out=tfplan.out
 
 deploy: tfplan.out

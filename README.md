@@ -27,12 +27,6 @@ export AWS_PROFILE=my-sfu-sandbox
 aws sso login
 ```
 
-## Terraform init
-
-```
-terraform init
-```
-
 ## Deploy k3s instance on AWS
 
 ```
