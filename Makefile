@@ -24,8 +24,8 @@ config:
 	ssh -oStrictHostKeyChecking=no -i ~/.ssh/ec2dev_key \
 		ubuntu@$(INSTANCE_IP) cat /etc/rancher/k3s/k3s.yaml \
 		> kubeconfig
-	sed -i 's/127.0.0.1/$(INSTANCE_IP)/' kubeconfig
-	sed -i 's/default/ec2dev-cluster/' kubeconfig
+	sed -i'' 's/127.0.0.1/$(INSTANCE_IP)/' kubeconfig
+	sed -i'' 's/default/ec2dev-cluster/' kubeconfig
 	# backing up the old kubeconfig
 	cp ~/.kube/config ~/.kube/config.bak
 	K3S_CONTEXT=`kubectl --kubeconfig=kubeconfig config view -o=jsonpath='{.contexts[0].name}'`
