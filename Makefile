@@ -24,8 +24,8 @@ config:
 	ssh -oStrictHostKeyChecking=no -i ~/.ssh/ec2dev_key \
 		ubuntu@$(INSTANCE_IP) cat /etc/rancher/k3s/k3s.yaml \
 		> kubeconfig
-	sed -i -- 's/127.0.0.1/$(INSTANCE_IP)/' kubeconfig
-	sed -i -- 's/default/ec2dev-cluster/' kubeconfig
+	sed -i.bak 's/127.0.0.1/$(INSTANCE_IP)/' kubeconfig
+	sed -i.bak 's/default/ec2dev-cluster/' kubeconfig
 	# backing up the old kubeconfig
 	cp ~/.kube/config ~/.kube/config.bak
 	K3S_CONTEXT=`kubectl --kubeconfig=kubeconfig config view -o=jsonpath='{.contexts[0].name}'`
@@ -38,7 +38,7 @@ config:
 	# Adding the new information to ~/.kube/config
 	KUBECONFIG=tmp_k3s.yaml:~/.kube/config kubectl config view --flatten > tmp_config
 	mv tmp_config ~/.kube/config
-	rm tmp_k3s.yaml kubeconfig
+	rm tmp_k3s.yaml kubeconfig kubeconfig.bak
 	@echo "Updated ~/.kube/config with ec2dev-cluster details."
 	kubectl config use-context ec2dev-cluster
 
