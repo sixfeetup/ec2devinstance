@@ -63,4 +63,9 @@ kubecreds:
 		--docker-password=$(shell aws ecr get-login-password)
 
 clean:
-	rm terraform.tfvars
+	rm -f terraform.tfvars
+
+admin-ip: MY_IP :=  $(shell curl -s checkip.amazonaws.com)
+admin-ip: clean terraform.tfvars # update admin ip
+	terraform plan -out=tfplan.out
+	terraform apply tfplan.out
