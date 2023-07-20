@@ -51,7 +51,7 @@ spec:
    solvers:
    - http01:
        ingress:
-         class:  nginx
+         class:  traefik
 EOF
 }
 
@@ -76,7 +76,7 @@ spec:
     solvers:
     - http01:
         ingress:
-          class: nginx
+          class: traefik
 EOF
 }
 
