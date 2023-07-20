@@ -18,19 +18,12 @@ instance-ip: # ec2 instance ip
 	@echo $(shell terraform output -raw instance_ip)
 
 config:
-	ssh -oStrictHostKeyChecking=no -i ~/.ssh/ec2dev_key \
-		ubuntu@$(INSTANCE_IP) \
-		'curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--tls-san $(INSTANCE_IP)" K3S_KUBECONFIG_MODE="644" sh -s -'
-	ssh -oStrictHostKeyChecking=no -i ~/.ssh/ec2dev_key \
-		ubuntu@$(INSTANCE_IP) cat /etc/rancher/k3s/k3s.yaml \
-		> kubeconfig
-	sed -i.bak 's/127.0.0.1/$(INSTANCE_IP)/' kubeconfig
-	sed -i.bak 's/default/ec2dev-cluster/' kubeconfig
+	aws secretsmanager get-secret-value --secret-id ec2dev-kubeconfig | jq -r '.SecretString' > ./kubeconfig
 	# backing up the old kubeconfig
 	cp ~/.kube/config ~/.kube/config.bak
 	K3S_CONTEXT=`kubectl --kubeconfig=kubeconfig config view -o=jsonpath='{.contexts[0].name}'`
 	# Extracting the cluster, context, and user information from kubeconfig
-	kubectl --kubeconfig=./kubeconfig config view --raw --minify > tmp_k3s.yaml
+	kubectl --kubeconfig=./kubeconfig config view --raw > tmp_k3s.yaml
 	# Removing the old information from ~/.kube/config
 	kubectl config unset contexts.${K3S_CONTEXT}
 	kubectl config unset clusters.${K3S_CONTEXT}
@@ -38,7 +31,7 @@ config:
 	# Adding the new information to ~/.kube/config
 	KUBECONFIG=tmp_k3s.yaml:~/.kube/config kubectl config view --flatten > tmp_config
 	mv tmp_config ~/.kube/config
-	rm tmp_k3s.yaml kubeconfig kubeconfig.bak
+	rm tmp_k3s.yaml kubeconfig
 	@echo "Updated ~/.kube/config with ec2dev-cluster details."
 	kubectl config use-context ec2dev-cluster
 
@@ -51,6 +44,7 @@ ssh:
 
 destroy:
 	terraform destroy
+	rm tfplan.out
 
 kubecreds:
 	aws sso login
@@ -64,6 +58,7 @@ kubecreds:
 
 clean:
 	rm -f terraform.tfvars
+	rm -f tfplan.out
 
 admin-ip: MY_IP :=  $(shell curl -s checkip.amazonaws.com)
 admin-ip: clean terraform.tfvars # update admin ip
