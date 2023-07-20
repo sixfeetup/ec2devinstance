@@ -45,6 +45,9 @@ ssh:
 destroy:
 	terraform destroy
 	rm tfplan.out
+	# force delete the secret in order to reuse the secret id when 
+	# recreating the cluster
+	aws secretsmanager delete-secret --secret-id ec2dev-kubeconfig --force-delete-without-recovery
 
 kubecreds:
 	aws sso login
