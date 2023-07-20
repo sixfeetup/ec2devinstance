@@ -6,7 +6,7 @@ variable "aws_region" {
 
 variable "path_to_public_key" {
   type    = string
-  default = "~/.ssh/ec2dev_key.pub"
+  default = "./ec2dev_key.pub"
 }
 
 variable "admin_ip" {

@@ -2,10 +2,10 @@ terraform.tfvars: MY_IP :=  $(shell curl -s checkip.amazonaws.com)
 terraform.tfvars:
 	cat terraform.tfvars.template | sed s/{admin_ip}/$(MY_IP)/ > terraform.tfvars
 
-key-pair:
-	ssh-keygen -t ED25519 -f ~/.ssh/ec2dev_key -N ""
+ec2dev_key:
+	ssh-keygen -t ED25519 -f ./ec2dev_key -N ""
 
-tfplan.out: terraform.tfvars key-pair
+tfplan.out: terraform.tfvars ec2dev_key
 	terraform init
 	terraform plan -out=tfplan.out
 
@@ -47,7 +47,7 @@ context:
 	kubectl config use-context ec2dev-cluster
 
 ssh:
-	ssh -i ~/.ssh/ec2dev_key ubuntu@$(INSTANCE_IP)
+	ssh -i ./ec2dev_key ubuntu@$(INSTANCE_IP)
 
 destroy:
 	terraform destroy
