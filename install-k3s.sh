@@ -89,7 +89,7 @@ sudo ./aws/install
 rm -rf aws awscliv2.zip
 
 echo "Cluster init!"
-until (curl -sfL https://get.k3s.io | sh -s - --cluster-init --tls-san ${k3s_tls_san}); do
+until (curl -sfL https://get.k3s.io | sh -s - --cluster-init --tls-san ${k3s_url} --tls-san ${k3s_tls_san}); do
   echo 'k3s did not install correctly'
   sleep 2
 done
