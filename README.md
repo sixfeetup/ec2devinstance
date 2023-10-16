@@ -53,3 +53,27 @@ export ECR_REPO=xxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com
 aws sso login
 make kubecreds
 ```
+
+## Debugging
+
+The `admin` security group will restrict access to the instance from your IP only, so if your IP address changes or if you change from on/off a VPN you will not be able to access the cluster anymore. The IP is set in `terraform.tfvars:admin_ip`.
+
+To update the security group to use your current IP run:
+```
+make admin-ip
+```
+
+If you're using a different AWS region than the repo default of `us-east-1`, remember to update it in `terraform.tfvars` and make sure your AWS config file matches it.
+If you are using a different AWS profile than the default one you will need to update the makefile to explictly use that profile, eg:
+
+```
+kubecreds:
+    aws sso login --profile my-custom-profile
+```
+
+If you want to run multiple ec2 cluster instances on the same account, for instance sandbox and prod instances, you will have to change the resource names to prevent conflicts.
+
+To clean everything and start again run:
+```
+make destroy
+```
