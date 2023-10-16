@@ -13,3 +13,11 @@ variable "admin_ip" {
   type = string
 }
 
+variable "common_tags" {
+  default = {
+    automation      = "terraform"
+    environment     = "sandbox"
+    application     = "k8s"
+    "maid_offhours" = "on"
+  }
+}

@@ -61,6 +61,8 @@ resource "aws_instance" "k8s" {
   vpc_security_group_ids = [aws_security_group.admin.id]
 
   user_data = data.cloudinit_config.k3s.rendered
+
+  tags = merge(var.common_tags, { "Name" = "ec2-cluster" })
 }
 
 resource "aws_eip_association" "eip_assoc" {
@@ -77,4 +79,3 @@ resource "aws_ecr_repository" "ec2dev" {
     scan_on_push = false
   }
 }
-
