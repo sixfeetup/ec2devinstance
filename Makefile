@@ -51,7 +51,7 @@ destroy:
 
 kubecreds:
 	aws sso login
-	aws ecr get-login-password --region us-east-1 | docker login --username AWS \
+	aws ecr get-login-password | docker login --username AWS \
 		--password-stdin $(ECR_REPO)
 	kubectl delete secret regcred --ignore-not-found
 	kubectl create secret docker-registry regcred \
